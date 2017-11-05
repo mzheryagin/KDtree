@@ -19,7 +19,6 @@ public class KdTree {
 
   // construct an empty set of points
   public KdTree() {
-    root = null;
     size = 0;
   }
 
@@ -39,21 +38,24 @@ public class KdTree {
       size++;
       return new Node(p, orient, new RectHV(xmin, ymin, xmax, ymax));
     }
+
+    if (n.p.equals(p)) {
+      return n;
+    }
+
     if (orient == VERTICAL) {
       if (p.x() < n.p.x()) {
-        insert(n.lb, p, HORIZONTAL, n.rect.xmin(), n.rect.ymin(), n.p.x(), n.rect.ymax());
+        n.lb = insert(n.lb, p, HORIZONTAL, n.rect.xmin(), n.rect.ymin(), n.p.x(), n.rect.ymax());
       } else {
-        insert(n.rt, p, HORIZONTAL, n.p.x(), n.rect.ymin(), n.rect.xmax(), n.rect.ymax());
+        n.rt = insert(n.rt, p, HORIZONTAL, n.p.x(), n.rect.ymin(), n.rect.xmax(), n.rect.ymax());
       }
     } else {
       if (p.y() < n.p.y()) {
-        insert(n.lb, p, VERTICAL, n.rect.xmin(), n.rect.ymin(), n.rect.xmax(), n.p.y());
+        n.lb = insert(n.lb, p, VERTICAL, n.rect.xmin(), n.rect.ymin(), n.rect.xmax(), n.p.y());
       } else {
-        insert(n.rt, p, VERTICAL, n.rect.xmin(), n.p.y(), n.rect.xmax(), n.rect.ymax());
+        n.rt = insert(n.rt, p, VERTICAL, n.rect.xmin(), n.p.y(), n.rect.xmax(), n.rect.ymax());
       }
     }
-    n.p = p;
-    n.o = orient;
     return n;
   }
 
@@ -232,7 +234,31 @@ public class KdTree {
 
   // unit testing of the methods (optional)
   public static void main(String[] args) {
+    KdTree test = new KdTree();
+    Point2D p1 = new Point2D(0.5, 0.5);
+    System.out.println(test.size() + " - size");
+    System.out.println(test.isEmpty() + " - isEmpty");
+    test.insert(p1);
+    System.out.println(test.size() + " - size");
 
+    Point2D p2 = new Point2D(0.1, 0.1);
+    test.insert(p2);
+    System.out.println(test.size() + " - size");
+
+    Point2D p3 = new Point2D(0.7, 0.7);
+    test.insert(p3);
+    System.out.println(test.size() + " - size");
+
+    Point2D p4 = new Point2D(0.7, 0.1);
+    test.insert(p4);
+    System.out.println(test.size() + " - size");
+
+    System.out.println("contains p3? " + test.contains(p3));
+    System.out.println("contains new Point 0.2-0.2? " + test.contains(new Point2D(0.2, 0.2)));
+
+    System.out.println("nearest to 0.2-0.2" + test.nearest(new Point2D(0.2, 0.2)));
+
+    test.draw();
   }
 }
 
